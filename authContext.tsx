@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import {
   User,
   onAuthStateChanged,
@@ -26,7 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -41,25 +35,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) {
       throw new Error('يرجى تسجيل الدخول بحساب Google أولاً');
     }
-
     return user.getIdToken();
   };
 
-  const signInWithGoogle = async (): Promise<void> => {
+  const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-
-    provider.setCustomParameters({
-      prompt: 'select_account',
-    });
-
+    // Forces account picker so user can explicitly pick or switch Google accounts
+    provider.setCustomParameters({ prompt: 'select_account' });
     await signInWithPopup(auth, provider);
   };
 
-  const signOut = async (): Promise<void> => {
+  const signOut = async () => {
     if (auth.currentUser) {
       await fbSignOut(auth);
     }
-
     setUser(null);
   };
 
@@ -80,10 +69,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-
   return context;
 }
