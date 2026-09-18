@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { AuthProvider, useAuth } from './firebase/authContext';
 import { Navbar } from './components/Navbar';
 import { TTSStudio } from './components/TTSStudio';
-import { HistoryView } from './components/HistoryView';
 import { ByokSettings } from './components/ByokSettings';
 import { AccountView } from './components/AccountView';
 import { PlansView } from './components/PlansView';
@@ -21,7 +20,7 @@ import { UserBalance, UserSettings, TTSGeneration } from './types/tts';
 function MainApp() {
   const { user, loading: authLoading, getIdToken } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'studio' | 'history' | 'byok' | 'account' | 'plans' | 'isolation'>('studio');
+  const [activeTab, setActiveTab] = useState<'studio' | 'byok' | 'account' | 'plans' | 'isolation'>('studio');
   const [balance, setBalance] = useState<UserBalance | null>(null);
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [generations, setGenerations] = useState<TTSGeneration[]>([]);
@@ -37,9 +36,12 @@ function MainApp() {
       setGenerations([]);
       return;
     }
+
     setIsDataLoading(true);
+
     try {
       const token = await getIdToken();
+
       const [balData, settData, gensData] = await Promise.all([
         getUserBalance(token).catch(() => null),
         getUserSettings(token).catch(() => null),
@@ -97,15 +99,6 @@ function MainApp() {
           />
         )}
 
-        {activeTab === 'history' && (
-          <HistoryView
-            generations={generations}
-            onRefresh={loadUserData}
-            onNavigateToStudio={() => setActiveTab('studio')}
-            onOpenAuth={() => setIsAuthModalOpen(true)}
-          />
-        )}
-
         {activeTab === 'byok' && (
           <ByokSettings
             settings={settings}
@@ -154,9 +147,11 @@ function MainApp() {
             <span>—</span>
             <span>جميع الحقوق محفوظة.</span>
           </div>
+
           <div className="flex items-center gap-3 text-[11px] text-slate-500">
             <span>حساب Google مستقل • 10,000 حرف شهرياً</span>
             <span>•</span>
+
             <button
               onClick={() => setActiveTab('isolation')}
               className="text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer"
