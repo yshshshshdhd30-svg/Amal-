@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { AuthProvider, useAuth } from './firebase/authContext';
 import { TTSStudio } from './TTSStudio';
 import { ByokSettings } from './ByokSettings';
@@ -58,6 +58,37 @@ function MainApp() {
       if (settData) setSettings(settData);
       if (gensData) setGenerations(gensData);
     } catch (err) {
-      console.error('Error loading isolated Google user data:', err);
+      console.error('Error loading user data:', err);
     } finally {
-      setIsDataLoading
+      setIsDataLoading(false);
+    }
+  }, [user, getIdToken]);
+
+  return (
+    <div>
+      <IslamicHeader />
+
+      <TTSStudio
+        balance={balance}
+        settings={settings}
+        generations={generations}
+        isDataLoading={isDataLoading}
+      />
+
+      <ShareSection />
+      <SeoSection />
+
+      {isAuthModalOpen && (
+        <AuthModal onClose={() => setIsAuthModalOpen(false)} />
+      )}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <MainApp />
+    </AuthProvider>
+  );
+}
