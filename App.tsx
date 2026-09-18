@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AuthProvider, useAuth } from './firebase/authContext';
-import { Navbar } from './components/Navbar';
 import { TTSStudio } from './components/TTSStudio';
 import { ByokSettings } from './components/ByokSettings';
 import { AccountView } from './components/AccountView';
@@ -20,7 +19,10 @@ import { UserBalance, UserSettings, TTSGeneration } from './types/tts';
 function MainApp() {
   const { user, loading: authLoading, getIdToken } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'studio' | 'byok' | 'account' | 'plans' | 'isolation'>('studio');
+  const [activeTab, setActiveTab] = useState<
+    'studio' | 'byok' | 'account' | 'plans' | 'isolation'
+  >('studio');
+
   const [balance, setBalance] = useState<UserBalance | null>(null);
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [generations, setGenerations] = useState<TTSGeneration[]>([]);
@@ -30,7 +32,6 @@ function MainApp() {
   // Load user data strictly for the current authenticated Google UID
   const loadUserData = useCallback(async () => {
     if (!user) {
-      // Clear all state if user signed out
       setBalance(null);
       setSettings(null);
       setGenerations([]);
@@ -74,16 +75,8 @@ function MainApp() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
-      {/* Navigation Bar */}
-      <Navbar
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-        balance={balance}
-        settings={settings}
-        onOpenAuth={() => setIsAuthModalOpen(true)}
-      />
 
-      {/* Sacred Islamic Header in the early section of the site */}
+      {/* Sacred Islamic Header */}
       <IslamicHeader />
 
       {/* Main Content Area */}
@@ -141,9 +134,12 @@ function MainApp() {
       {/* Footer */}
       <footer className="border-t border-slate-900 bg-slate-950 py-6 px-4 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+
           <div className="flex items-center gap-2 text-slate-300 font-medium">
             <span>© 2026</span>
-            <span className="font-bold text-white">النص ☜ صوت | Text ☞ Voice</span>
+            <span className="font-bold text-white">
+              النص ☜ صوت | Text ☞ Voice
+            </span>
             <span>—</span>
             <span>جميع الحقوق محفوظة.</span>
           </div>
@@ -159,6 +155,7 @@ function MainApp() {
               فحص العزل الأمني
             </button>
           </div>
+
         </div>
       </footer>
 
@@ -167,6 +164,7 @@ function MainApp() {
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
       />
+
     </div>
   );
 }
